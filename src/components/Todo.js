@@ -39,7 +39,9 @@ const Todo = () => {
   const [update, setUpdate] = useState("");
   const [updatedval, setupdatedval] = useState("");
   const [updatepriority, setupdatepriority] = useState("");
+  const [confirmationId, setConfirmationId] = useState("");
   const [deleteConfirmationModal, setDeleteConfirmationModal] = useState(false);
+  const [completedConfirmationModal, setCompletedConfirmationModal] = useState(false);
 
   //Remove Task.....................
   const deleteTask = () => {
@@ -127,6 +129,8 @@ const Todo = () => {
     };
 
     dispatch(Update_data(updated_task, id));
+    toast.success("You task is completed")
+    setCompletedConfirmationModal(false)
   };
 
   return (
@@ -162,45 +166,35 @@ const Todo = () => {
               return (
                 <>
                   <div
+                     
                     key={ele?.id}
-                    className={`${`todo_container mb-2 d-flex justify-content-between align-items-center  px-2 ${ele.priority}`} `}
+                    className={`${`li_item ${ele.priority}`} `}
                     style={{
                       background:
                         ele.priority === "completed" ? "green" : "white",
-                      borderRadius: "2vh",
-                      height: "3rem",
-                      color: ele.priority === "completed" ? "white" : "black",
-                      display: "flex",
-                      alignItems: "flex-end",
-                      justifyContent: "flex-end",
-                      
+                        color: ele.priority === "completed" ? "white" : "black",
                     }}
                   >
-                    <li style={{ listStyle: "none" }}>{ele?.items}</li>
+                    <div>
+
+                    <li style={{ listStyle: "none", paddingLeft: "15px" }}>{ele?.items}</li>
+                    </div>
                     <div
                       style={{
-                        display: "flex",
-                        alignItems: "flex-end",
-
+                      
                         justifyContent:
                           ele.priority === "completed"
                             ? "flex-end"
                             : "space-between",
                       }}
-                      className="edit-dlt col-lg-6 py-2 d-flex align-items-center "
+                      className="left-item"
                     >
                       {/* Update Button with Icon */}
                       <button
+                       className="btn btn-st"
                         style={{
-                          borderRadius: "1vh",
-                          border: "0rem",
-                          boxShadow: " 0px 2px 7px 0px blue",
-                          padding: "1px 5px",
                           display:
-                            ele.priority === "completed" ? "none" : "block",
-                            // display: "flex",
-                            // alignItems: "center",
-                            // gap: "1vh"
+                            ele.priority === "completed" ? "none" : "flex",
                         }}
                         onClick={() => {
                           handleShow(ele);
@@ -215,16 +209,11 @@ const Todo = () => {
 
                       {/* Remove icon with button for remove the task */}
                       <button
+                       className="btn btn-st"
                         style={{
-                          borderRadius: "1vh",
-                          border: "0rem",
-                          padding: "1px 5px",
-                          boxShadow: " 0px 2px 7px 0px red",
                           display:
-                            ele.priority === "completed" ? "none" : "block",
-                            // display: "flex",
-                            // alignItems: "center",
-                            // gap: "1vh"
+                            ele.priority === "completed" ? "none" : "flex",
+
                         }}
                         onClick={() => {
                           setDeleteConfirmationModal(true);
@@ -237,18 +226,15 @@ const Todo = () => {
 
                       {/* mark as complete button */}
                       <button
-                        onClick={() => completedHandler(ele.id)}
+                        onClick={() =>  {
+                          setCompletedConfirmationModal(true);
+                          setConfirmationId(ele.id);
+                          }}
+                       className="btn com btn-st"
                         style={{
-                          borderRadius: "1vh",
-                          border: "0rem",
-                          padding: "1px 5px",
-                          boxShadow: " 0px 2px 7px 0px green",
-                          // display: "flex",
-                          //   alignItems: "center",
-                          //   gap: "1vh",
-
                           display:
-                            ele.priority === "completed" ? "none" : "block",
+                            ele.priority === "completed" ? "none" : "flex",
+                            // width: 20rem
                         }}
                       >
                         <FcCheckmark />
@@ -259,20 +245,12 @@ const Todo = () => {
 
                       {/* Eye icon with Button for View post in modal */}
                       <button
-                        style={{
-                          borderRadius: "1vh",
-                          border: "0rem",
-                          padding: "1px 5px",
-                          boxShadow: " 0px 2px 7px 0px yellow",
-                          float: "right",
-                          display: "flex",
-                            alignItems: "center",
-                            gap: "1vh"
-                        }}
+                       className="view-btn btn btn-st"
                         onClick={() => {
                           setView(true);
                           setViewValue(ele);
                         }}
+                        style={{display:"flex", alignItems:"center", justifyContent:"center", background: "#fff"}}
                       >
                         <BsFillEyeFill style={{ cursor: "pointer" }} />
                         View
@@ -373,6 +351,33 @@ const Todo = () => {
                   onClick={() => usertask_update(update?.id)}
                 >
                   Save Changes
+                </Button>
+              </Modal.Footer>
+            </Modal>
+
+            {/* completed confirmation modal */}
+            <Modal
+              show={completedConfirmationModal}
+              onHide={() => {
+                setCompletedConfirmationModal(false);
+              }}
+              animation={false}
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>Complete TODO!!!</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>Are you sure to complete this task </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    setCompletedConfirmationModal(false);
+                  }}
+                >
+                  Close
+                </Button>
+                <Button variant="primary" onClick={() => completedHandler(confirmationId)}>
+                  Sure
                 </Button>
               </Modal.Footer>
             </Modal>
